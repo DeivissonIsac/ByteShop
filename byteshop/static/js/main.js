@@ -1,0 +1,1 @@
+console.log("O arquivo main.js está funcionando!");
