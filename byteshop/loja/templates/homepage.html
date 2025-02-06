@@ -4,5 +4,46 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
-<h1 class="text-center">Home</h1>
+
+<picture>
+    <source media="(max-width: 991px)" srcset="static/images/BannerCurto.png">
+    <source media="(min-width: 992px)" srcset="static/images/BannerLongo.png">
+    <img src="static/images/BannerLongo.png" class="img-fluid w-100" alt="Banner">
+</picture>
+
+
+<div class="container">
+    <div class="row">
+        {% for banner in banners %}
+        <div class="col-lg-6 col-md-12 mt-4 transicao"> <!-- 6 colunas em telas grandes, 12 em telas menores -->
+            <a href="/{{ banner.link_destino }}">
+                <img src="{{ banner.imagem.url }}" class="img-fluid rounded-4 " alt="Banner">
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Aviso Site de Portifólio -->
+<!--<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">-->
+<!--  <div class="modal-dialog modal-dialog-centered">-->
+<!--    <div class="modal-content">-->
+<!--      <div class="modal-header">-->
+<!--        <h1 class="modal-title fs-5" id="staticBackdropLabel">ESSE SITE É APENAS DEMONSTRATIVO</h1>-->
+<!--        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--      </div>-->
+<!--      <div class="modal-body">-->
+<!--        <p>Esse site é uma réplica!! NÃO é uma loja verdade, é apenas um projeto de portifólio. Os produtos e valores são fictícios. Espero que goste :D</p>-->
+<!--        <p>Ass: Deivisson Isac</p>-->
+<!--      </div>-->
+<!--      <div class="modal-footer d-flex justify-content-between">-->
+<!--        <div class="form-check">-->
+<!--          <input type="checkbox" class="form-check-input" id="doNotShowAgain">-->
+<!--          <label class="form-check-label" for="doNotShowAgain">Não mostrar novamente</label>-->
+<!--        </div>-->
+<!--        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendi</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
 {% endblock %}

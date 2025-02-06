@@ -5,4 +5,11 @@
 
 {% block body %}
 <h1 class="text-center">Loja</h1>
+
+{% for produto in produtos %}
+    <p>{{ produto.nome }}</p>
+    <p>{{ produto.preco }}</p>
+    <img src="{{ produto.imagem.url }}" width="300" height="450">
+{% endfor %}
+
 {% endblock %}

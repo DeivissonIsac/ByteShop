@@ -1,3 +1,11 @@
 .cor-fundo {
     background-color: #F8F8FF;
 }
+
+.transicao {
+    transition: transform 0.3s ease; /* Transição suave */
+}
+
+.transicao:hover {
+    transform: scale(1.02); /* Aumenta o tamanho em 10% */
+}
