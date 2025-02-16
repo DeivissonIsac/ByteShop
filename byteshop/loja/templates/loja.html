@@ -9,7 +9,9 @@
 {% for produto in produtos %}
     <p>{{ produto.nome }}</p>
     <p>{{ produto.preco }}</p>
-    <img src="{{ produto.imagem.url }}" width="300" height="450">
+    <a href="{% url 'ver_produto' produto.id %}">
+        <img src="{{ produto.imagem.url }}" width="300" height="450">
+    </a>
 {% endfor %}
 
 {% endblock %}

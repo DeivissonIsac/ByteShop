@@ -8,18 +8,17 @@
 <picture>
     <source media="(max-width: 991px)" srcset="static/images/BannerCurto.png">
     <source media="(min-width: 992px)" srcset="static/images/BannerLongo.png">
-    <img src="static/images/BannerLongo.png" class="img-fluid w-100" alt="Banner">
+    <img src="static/images/BannerLongo.png" class="img-fluid w-100 shadow" alt="Banner">
 </picture>
-
 
 <div class="container">
     <div class="row">
         {% for banner in banners %}
-        <div class="col-lg-6 col-md-12 mt-4 transicao"> <!-- 6 colunas em telas grandes, 12 em telas menores -->
-            <a href="/{{ banner.link_destino }}">
-                <img src="{{ banner.imagem.url }}" class="img-fluid rounded-4 " alt="Banner">
-            </a>
-        </div>
+            <div class="col-lg-6 col-md-12 mt-4 transicao">
+                <a href="{% url 'loja' %}{{ banner.link_destino }}">
+                    <img src="{{ banner.imagem.url }}" class="img-fluid rounded-4 " alt="Banner">
+                </a>
+            </div>
         {% endfor %}
     </div>
 </div>
