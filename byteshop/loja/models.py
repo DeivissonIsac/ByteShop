@@ -8,6 +8,9 @@ class Cliente(models.Model):
     id_sessao = models.CharField(max_length=50, null=True, blank=True)
     usuario = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return str(self.email)
+
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=100, null=True, blank=True)
@@ -46,7 +49,7 @@ class ItemEstoque(models.Model):
     quantidade = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{str(self.produto.nome)} - {str(self.cor)} - {str(self.tamanho)} - {str(self.quantidade)}"
+        return f"{str(self.produto.nome)} - Cor: {str(self.cor)} - Tamanho: {str(self.tamanho)} - Quantidade: {str(self.quantidade)}"
 
 
 class Endereco(models.Model):
@@ -67,11 +70,27 @@ class Pedido(models.Model):
     endereco = models.ForeignKey(Endereco, null=True, blank=True, on_delete=models.SET_NULL)
     data_finalizacao = models.DateTimeField(null=True, blank=True)
 
+    def __str__(self):
+        return f"PedidoID: {self.id} - Cliente: {self.cliente} - Finalizado: {self.finalizado}"
+
+    def quantidade_total(self):
+        pass
+
+    def preco_total(self):
+        pass
 
 class ItensPedido(models.Model):
     item_estoque = models.ForeignKey(ItemEstoque, null=True, blank=True, on_delete=models.SET_NULL)
     quantidade = models.IntegerField(default=0)
     pedido = models.ForeignKey(Pedido, null=True, blank=True, on_delete=models.SET_NULL)
+
+    @property
+    def preco_total(self):
+        self.total = self.item_estoque.produto.preco * self.quantidade
+        return self.total
+
+    def __str__(self):
+        return f"Pedido: ID{self.pedido.id}-{self.pedido.cliente} - Produto: {self.quantidade} x {self.item_estoque.produto.nome} - {self.item_estoque.cor} - {self.item_estoque.tamanho}"
 
 class Banner(models.Model):
     imagem = models.ImageField(null=True, blank=True)

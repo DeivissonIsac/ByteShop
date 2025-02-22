@@ -4,6 +4,44 @@
 {% block title %}Carrinho{% endblock %}
 
 {% block body %}
-<h1 class="text-center">Carrinho</h1>
-<a href="{% url 'checkout' %}">Checkout</a>
+<div class="container py-2">
+    <h1 class="text-center mb-4">Carrinho de Compras</h1>
+
+    {% if itens_pedido %}
+        <div class="card shadow rounded-3">
+            <div class="card-body">
+                {% for item in itens_pedido %}
+                    <div class="d-flex">
+                        <img src="{{ item.item_estoque.produto.imagem.url }}" class="rounded" width="100" height="150" alt="Imagem do Produto">
+                        <div class="ms-4">
+                            <h5 class="mb-2">{{ item.item_estoque.produto.nome }}</h5>
+                            <p class="mb-2"><strong>Cor:</strong>
+                                <svg width="20px" height="20px" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                    <defs><style>.a{stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width: 3px}</style></defs>
+                                    <circle class="a" fill="{{ item.item_estoque.cor.codigo }}" cx="24" cy="24" r="21.5"/>
+                                </svg>
+                                <strong>Tamanho:</strong> {{ item.item_estoque.tamanho }}
+                            </p>
+
+                            <p class="mb-2"></p>
+                            <p class="mb-2"><strong>Preço: </strong> R$ {{ item.item_estoque.produto.preco }}<strong> Quantidade:</strong> {{ item.quantidade }}</p>
+                            <p class="mb-2"><strong>Total:</strong> R$ {{ item.preco_total }}</p>
+                        </div>
+                    </div>
+                    {% if not forloop.last %}
+                        <hr class="my-4">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center" role="alert">
+            Seu carrinho está vazio!
+        </div>
+    {% endif %}
+
+    <div class="d-flex justify-content-center mt-4">
+        <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg">Ir para o Checkout</a>
+    </div>
+</div>
 {% endblock %}
