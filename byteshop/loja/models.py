@@ -73,11 +73,11 @@ class Pedido(models.Model):
     def __str__(self):
         return f"PedidoID: {self.id} - Cliente: {self.cliente} - Finalizado: {self.finalizado}"
 
-    def quantidade_total(self):
-        pass
-
+    @property
     def preco_total(self):
-        pass
+        itens_pedido = ItensPedido.objects.filter(pedido__id=self.id)
+        preco = sum([item.preco_total for item in itens_pedido])
+        return preco
 
 class ItensPedido(models.Model):
     item_estoque = models.ForeignKey(ItemEstoque, null=True, blank=True, on_delete=models.SET_NULL)

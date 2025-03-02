@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import *
+import uuid
 
 def homepage(request):
     banners = Banner.objects.filter(ativo=True)
@@ -41,6 +42,50 @@ def adicionar_carrinho(request, id_produto):
         id_cor = dados.get("cor")
         if not tamanho:
             return redirect('ver_produto', id_produto=id_produto, id_cor=id_cor)
+        resposta = redirect('carrinho')
+        #Pegar Cliente
+        if request.user.is_authenticated:
+            cliente = request.user.cliente
+        else:
+            #Criando Usuário Anonimo quando colocar um produto no carrinho
+            if request.COOKIES.get("id_sessao"):
+                id_sessao = request.COOKIES.get("id_sessao")
+            else:
+                id_sessao = str(uuid.uuid4())
+                resposta.set_cookie(key="id_sessao", value=id_sessao)
+            cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
+
+        pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
+        item_estoque = ItemEstoque.objects.get(produto__id=id_produto, tamanho=tamanho, cor__id=id_cor)
+        item_pedido, pedido = ItensPedido.objects.get_or_create(item_estoque=item_estoque, pedido=pedido)
+        item_pedido.quantidade += 1
+        item_pedido.save()
+        return resposta
+    else:
+        return redirect('loja')
+
+def remover_carrinho(request, id_produto):
+    if request.method == "POST" and id_produto:
+        excluir_item = request.POST.get("form_excluir")
+        dados = request.POST.dict()
+        tamanho = dados.get("tamanho")
+        id_cor = dados.get("cor")
+        if not tamanho:
+            return redirect('ver_produto', id_produto=id_produto, id_cor=id_cor)
+        if request.user.is_authenticated:
+            cliente = request.user.cliente
+        else:
+            return redirect('loja')
+        pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
+        item_estoque = ItemEstoque.objects.get(produto__id=id_produto, tamanho=tamanho, cor__id=id_cor)
+        item_pedido, pedido = ItensPedido.objects.get_or_create(item_estoque=item_estoque, pedido=pedido)
+        if excluir_item == "excluir_unidades":
+            item_pedido.quantidade -= 1
+            item_pedido.save()
+            if item_pedido.quantidade <= 0:
+                item_pedido.delete()
+        elif excluir_item == "excluir_item":
+            item_pedido.delete()
         return redirect('carrinho')
     else:
         return redirect('loja')
@@ -48,6 +93,15 @@ def adicionar_carrinho(request, id_produto):
 def carrinho(request):
     if request.user.is_authenticated:
         cliente = request.user.cliente
+    else:
+        if request.COOKIES.get("id_sessao"):
+            id_sessao = request.COOKIES.get("id_sessao")
+            cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
+            print("Aqui ele não está logado, e tem cookie")
+        else:
+            context = {"itens_pedido": None, "pedido": None}
+            print("Aqui ele não está logado, e não tem cookie")
+            return render(request, 'carrinho.html', context)
     pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
     itens_pedido = ItensPedido.objects.filter(pedido=pedido)
     context = {"itens_pedido": itens_pedido, "pedido": pedido}

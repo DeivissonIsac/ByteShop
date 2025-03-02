@@ -4,6 +4,7 @@
 {% block title %}Loja{% endblock %}
 
 {% block body %}
+<div class="container">
 <h1 class="text-center">Loja</h1>
 
 {% for produto in produtos %}
@@ -13,5 +14,5 @@
         <img src="{{ produto.imagem.url }}" width="300" height="450">
     </a>
 {% endfor %}
-
+</div>
 {% endblock %}

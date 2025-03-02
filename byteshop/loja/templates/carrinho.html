@@ -12,7 +12,7 @@
             <div class="card-body">
                 {% for item in itens_pedido %}
                     <div class="d-flex">
-                        <img src="{{ item.item_estoque.produto.imagem.url }}" class="rounded" width="100" height="150" alt="Imagem do Produto">
+                        <img src="{{ item.item_estoque.produto.imagem.url }}" class="rounded" width="100" alt="Imagem do Produto" style="object-fit: contain;">
                         <div class="ms-4">
                             <h5 class="mb-2">{{ item.item_estoque.produto.nome }}</h5>
                             <p class="mb-2"><strong>Cor:</strong>
@@ -22,16 +22,45 @@
                                 </svg>
                                 <strong>Tamanho:</strong> {{ item.item_estoque.tamanho }}
                             </p>
+                            <p class="mb-2"><strong>Preço: </strong> R$ {{ item.item_estoque.produto.preco }}</p>
+                            <div class="d-flex">
+                                <p class="mb-2 d-flex align-items-center gap-2"><strong class="mt-1 me-2">Quantidade:</strong>
+                                    <form method="POST" action="{% url 'remover_carrinho' item.item_estoque.produto.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="tamanho" value="{{ item.item_estoque.tamanho }}">
+                                        <input type="hidden" name="cor" value="{{ item.item_estoque.cor.id }}">
+                                        <input type="hidden" name="form_excluir" value="excluir_unidades">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm px-2">−</button>
+                                    </form>
 
-                            <p class="mb-2"></p>
-                            <p class="mb-2"><strong>Preço: </strong> R$ {{ item.item_estoque.produto.preco }}<strong> Quantidade:</strong> {{ item.quantidade }}</p>
-                            <p class="mb-2"><strong>Total:</strong> R$ {{ item.preco_total }}</p>
+                                    <span class="fw-bold fs-5 mx-2">{{ item.quantidade }}</span>
+
+                                    <form method="POST" action="{% url 'adicionar_carrinho' item.item_estoque.produto.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="tamanho" value="{{ item.item_estoque.tamanho }}">
+                                        <input type="hidden" name="cor" value="{{ item.item_estoque.cor.id }}">
+                                        <button type="submit" class="btn btn-outline-success btn-sm px-2">+</button>
+                                    </form>
+                                </p>
+                            </div>
+                                <p class="mb-2"><strong>Total:</strong> R$ {{ item.preco_total }}</p>
+                        </div>
+                        <div class="ms-auto align-self-start">
+                            <form method="POST" action="{% url 'remover_carrinho' item.item_estoque.produto.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="tamanho" value="{{ item.item_estoque.tamanho }}">
+                                <input type="hidden" name="cor" value="{{ item.item_estoque.cor.id }}">
+                                <input type="hidden" name="form_excluir" value="excluir_item">
+                                <button type="submit" class="btn-close"></button>
+                            </form>
                         </div>
                     </div>
                     {% if not forloop.last %}
                         <hr class="my-4">
                     {% endif %}
                 {% endfor %}
+                <hr class="my-4">
+                <h5 class="mb-2 text-end">Total do Carrinho: R$ {{ pedido.preco_total }}</h5>
             </div>
         </div>
     {% else %}
