@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Adicionar Endereço{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="d-flex text-center my-2 align-items-center justify-content-center"><svg xmlns="http://www.w3.org/2000/svg" width="40" fill="currentColor" class="bi bi-house-fill me-2" viewBox="0 0 16 16">
+      <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"/>
+      <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293z"/>
+    </svg>Adicionar Endereço</h1>
+    <div class="d-flex justify-content-center">
+        <div class="card shadow-lg col-lg-9 col-md-12">
+            <div class="card-body">
+                <h3>Novo endereço:</h3>
+                <hr>
+                <form method="POST" action="" id="form" class="row g-3">
+                    {% csrf_token %}
+                    <div class="col-9">
+                        <label for="inputRua" class="form-label">Logradouro</label>
+                        <input type="text" class="form-control" id="inputRua">
+                    </div>
+                    <div class="col-3">
+                        <label for="inputNumero" class="form-label">Número</label>
+                        <input type="text" class="form-control" id="inputNumero">
+                    </div>
+                    <div class="col-6">
+                        <label for="inputBairro" class="form-label">Bairro</label>
+                        <input type="text" class="form-control" id="inputBairro">
+                    </div>
+                    <div class="col-6">
+                        <label for="inputComplemento" class="form-label">Complemento</label>
+                        <input type="text" class="form-control" id="inputComplemento">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="inputCidade" class="form-label">Cidade</label>
+                        <input type="text" class="form-control" id="inputCidade">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="inputEstado" class="form-label">Estado</label>
+                        <input type="text" class="form-control" id="inputEstado" maxlength="2" placeholder="MG, SP, RJ..">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="inputCEP" class="form-label">CEP</label>
+                        <input type="number" class="form-control" id="inputCEP">
+                    </div>
+                    <div class="col-12 d-flex justify-content-end gap-2">
+                        <a class="btn btn-outline-primary" href="{% url 'checkout' %}">Voltar</a>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0; /* <-- Aparentemente, algumas margens ainda estão lá, apesar de estar ocultas */
+}
+</style>
+{% endblock %}

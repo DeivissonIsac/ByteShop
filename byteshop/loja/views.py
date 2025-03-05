@@ -52,7 +52,7 @@ def adicionar_carrinho(request, id_produto):
                 id_sessao = request.COOKIES.get("id_sessao")
             else:
                 id_sessao = str(uuid.uuid4())
-                resposta.set_cookie(key="id_sessao", value=id_sessao)
+                resposta.set_cookie(key="id_sessao", value=id_sessao, max_age=3600 * 24 * 30)
             cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
 
         pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
@@ -75,7 +75,11 @@ def remover_carrinho(request, id_produto):
         if request.user.is_authenticated:
             cliente = request.user.cliente
         else:
-            return redirect('loja')
+            if request.COOKIES.get("id_sessao"):
+                id_sessao = request.COOKIES.get("id_sessao")
+                cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
+            else:
+                return redirect('loja')
         pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
         item_estoque = ItemEstoque.objects.get(produto__id=id_produto, tamanho=tamanho, cor__id=id_cor)
         item_pedido, pedido = ItensPedido.objects.get_or_create(item_estoque=item_estoque, pedido=pedido)
@@ -97,10 +101,8 @@ def carrinho(request):
         if request.COOKIES.get("id_sessao"):
             id_sessao = request.COOKIES.get("id_sessao")
             cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
-            print("Aqui ele não está logado, e tem cookie")
         else:
             context = {"itens_pedido": None, "pedido": None}
-            print("Aqui ele não está logado, e não tem cookie")
             return render(request, 'carrinho.html', context)
     pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
     itens_pedido = ItensPedido.objects.filter(pedido=pedido)
@@ -109,7 +111,23 @@ def carrinho(request):
 
 
 def checkout(request):
-    return render(request, 'checkout.html')
+    if request.user.is_authenticated:
+        cliente = request.user.cliente
+    else:
+        if request.COOKIES.get("id_sessao"):
+            id_sessao = request.COOKIES.get("id_sessao")
+            cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
+        else:
+            return render(request, 'loja.html')
+    pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
+    itens_pedido = ItensPedido.objects.filter(pedido=pedido)
+    enderecos = Endereco.objects.filter(cliente=cliente)
+    context = {"pedido": pedido, "enderecos": enderecos, "itens_pedido": itens_pedido}
+    return render(request, 'checkout.html', context)
+
+def adicionar_endereco(request):
+    context = 0
+    return render(request, 'adicionar_endereco.html')
 
 
 def minha_conta(request):

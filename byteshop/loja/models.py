@@ -55,12 +55,15 @@ class ItemEstoque(models.Model):
 class Endereco(models.Model):
     rua = models.CharField(max_length=400, null=True, blank=True)
     bairro = models.CharField(max_length=400, null=True, blank=True)
-    numero = models.IntegerField(default=0)
+    numero = models.CharField(max_length=5, null=True, blank=True)
     complemento = models.CharField(max_length=400, null=True, blank=True)
     cep = models.CharField(max_length=40, null=True, blank=True)
     cidade = models.CharField(max_length=400, null=True, blank=True)
     estado = models.CharField(max_length=400, null=True, blank=True)
     cliente = models.ForeignKey(Cliente, null=True, blank=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return f"{str(self.cliente)} - {str(self.cidade)}/{str(self.estado)}"
 
 
 class Pedido(models.Model):

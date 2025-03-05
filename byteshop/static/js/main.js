@@ -17,3 +17,20 @@
 //  }
 //});
 //});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const toggleBtn = document.getElementById('toggle-visibility');
+    let expanded = false;
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+            document.querySelectorAll('.produto-item[data-index]').forEach((el, index) => {
+                if (index >= 2) {
+                    el.classList.toggle('d-none');
+                }
+            });
+            expanded = !expanded;
+            toggleBtn.textContent = expanded ? "Ocultar" : "Ver Tudo";
+        });
+    }
+});
