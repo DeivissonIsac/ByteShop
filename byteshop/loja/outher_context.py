@@ -1,4 +1,4 @@
-from .models import Pedido, ItensPedido, Categoria, Cliente
+from .models import Pedido, ItensPedido, Categoria, Cliente, Tipo
 
 def carrinho(request):
     quantidade_produtos_carrinho = 0
@@ -16,6 +16,7 @@ def carrinho(request):
         quantidade_produtos_carrinho += item.quantidade
     return {"quantidade_produtos_carrinho": quantidade_produtos_carrinho}
 
-def categorias(request):
+def categorias_tipos(request):
     categorias = Categoria.objects.all()
-    return {"categorias": categorias}
+    tipos = Tipo.objects.all()
+    return {"categorias": categorias, "tipos": tipos}

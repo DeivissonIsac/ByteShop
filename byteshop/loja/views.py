@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import *
+from .filtros import filtrar_produtos
 import uuid
 
 def homepage(request):
@@ -8,10 +9,9 @@ def homepage(request):
     return render(request, 'homepage.html', context)
 
 
-def loja(request, categoria=None):
+def loja(request, filtro=None):
     produtos = Produto.objects.filter(ativo=True)
-    if categoria:
-        produtos = produtos.filter(categoria__nome=categoria)
+    produtos = filtrar_produtos(produtos, filtro)
     context = {"produtos": produtos}
     return render(request, 'loja.html', context)
 
@@ -118,7 +118,7 @@ def checkout(request):
             id_sessao = request.COOKIES.get("id_sessao")
             cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
         else:
-            return render(request, 'loja.html')
+            return redirect('loja')
     pedido, criado = Pedido.objects.get_or_create(cliente=cliente, finalizado=False)
     itens_pedido = ItensPedido.objects.filter(pedido=pedido)
     enderecos = Endereco.objects.filter(cliente=cliente)
@@ -126,8 +126,31 @@ def checkout(request):
     return render(request, 'checkout.html', context)
 
 def adicionar_endereco(request):
-    context = 0
-    return render(request, 'adicionar_endereco.html')
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            cliente = request.user.cliente
+        else:
+            if request.COOKIES.get("id_sessao"):
+                id_sessao = request.COOKIES.get("id_sessao")
+                cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
+            else:
+                return redirect('loja')
+        dados = request.POST.dict()
+        print(dados)
+        endereco = Endereco.objects.create(
+            cliente=cliente,
+            rua=dados.get("rua"),
+            bairro=dados.get("bairro"),
+            numero=dados.get("numero"),
+            complemento=dados.get("complemento"),
+            cidade=dados.get("cidade"),
+            estado=dados.get("estado"),
+            cep=dados.get("cep")
+        )
+        endereco.save()
+        return redirect('checkout')
+    else:
+        return render(request, 'adicionar_endereco.html')
 
 
 def minha_conta(request):

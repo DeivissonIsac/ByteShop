@@ -8,12 +8,26 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item transicao-maior">
+        <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{% url 'loja' %}"><strong>Loja</strong></a>
         </li>
+
         {% for categoria in categorias %}
-        <li class="nav-item transicao-maior">
-          <a class="nav-link active " aria-current="page" href="{% url 'loja' %}{{ categoria.nome }}"><strong>{{ categoria.nome.title }}</strong></a>
+        <li class="nav-item dropdown">
+          <a class="nav-link active" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>{{ categoria.nome.title }}</strong>
+          </a>
+          <ul class="dropdown-menu pb-0">
+            {% for tipo in tipos %}
+              {% if tipo.categoria.slug == categoria.slug %}
+                <li>
+                  <a class="dropdown-item mb-2" aria-current="page" href="{% url 'loja' %}{{ categoria.slug }}-{{ tipo.slug }}">{{ tipo.nome.title }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+            <li><hr class="dropdown-divider mb-0"></li>
+            <li><a class="nav-link active text-center" aria-current="page" href="{% url 'loja' %}{{ categoria.slug }}"><strong>Ver Tudo</strong></a></li>
+          </ul>
         </li>
         {% endfor %}
       </ul>
