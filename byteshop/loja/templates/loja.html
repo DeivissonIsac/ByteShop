@@ -4,15 +4,88 @@
 {% block title %}Loja{% endblock %}
 
 {% block body %}
-<div class="container">
-<h1 class="text-center">Loja</h1>
+        {% if produtos %}
+            <div class="dropdown d-flex justify-content-end my-4 mx-4">
+                <button type="button" class="btn btn-outline-dark" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel-fill" viewBox="0 0 16 16">
+                      <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z"/>
+                    </svg>
+                    Filtrar
+                </button>
+                <form method="POST" action="" class="dropdown-menu dropdown-menu-end p-4">
+                    {% csrf_token %}
 
-{% for produto in produtos %}
-    <p>{{ produto.nome }}</p>
-    <p>{{ produto.preco }}</p>
-    <a href="{% url 'ver_produto' produto.id %}">
-        <img src="{{ produto.imagem.url }}" width="300" height="450">
-    </a>
-{% endfor %}
+                    <p class="fw-bold">Preço</p>
+                    <input type="range" class="form-range" min="0" max={{ maximo }} step="10" id="preco-minimo" name="preco_minimo" value={{ minimo }}>
+                    <input type="range" class="form-range" min="0" max={{ maximo }} step="10" id="preco-maximo" name="preco_maximo" value={{ maximo }}>
+                    <p>De R$ <span id="min-value">{{ minimo }}</span> até R$ <span id="max-value">{{ maximo }}</span></p>
+
+                    <p class="fw-bold mb-0">Categoria:</p>
+                    {% for categoria in categorias %}
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="categoria-{{ categoria.slug }}" name="categoria" value="{{ categoria.slug }}">
+                            <label class="form-check-label" for="categoria-{{ categoria.slug }}">{{ categoria.nome.title }}</label>
+                        </div>
+                    {% endfor %}
+
+                    <p class="fw-bold mt-2 mb-0">Tipo:</p>
+                    <select class="form-select" aria-label="Default select example">
+                    {% for tipo in tipos %}
+                      <option value="{{ tipo.slug }}">{{ tipo.nome.title }}</option>
+<!--                        <div class="form-check">-->
+<!--                            <input type="radio" class="form-check-input" id="tipo-{{ tipo.nome }}" name="tipo" value="{{ tipo.slug }}">-->
+<!--                            <label class="form-check-label" for="tipo-{{ tipo.nome }}">{{ tipo.nome.title }}</label>-->
+<!--                        </div>-->
+                    {% endfor %}
+                    </select>
+
+                    <p class="fw-bold mt-2 mb-0">Tamanho:</p>
+                    {% for tamanho in tamanhos %}
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="size-{{ tamanho }}" name="tamanho" value="{{ tamanho }}">
+                            <label class="form-check-label" for="size-{{ tamanho }}">{{ tamanho }}</label>
+                        </div>
+                    {% endfor %}
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success w-50 mt-3 justify-content-center">Aplicar Filtros</button>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                {% if produtos %}
+                    {% for produto in produtos %}
+                        <div class="col-lg-3 col-6 mb-4">
+                            <div class="card shadow transicao h-100">
+                                <a href="{% url 'ver_produto' produto.id %}">
+                                    <img src="{{ produto.imagem.url }}" class="card-img-top" alt="{{ produto.nome }}">
+                                </a>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">{{ produto.nome }}</h5>
+                                    <p class="card-text">R$ {{ produto.preco }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-center w-100">Lamentamos, mas não temos estoque!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+document.getElementById("preco-minimo").addEventListener("input", function() {
+    document.getElementById("min-value").textContent = this.value;
+});
+
+document.getElementById("preco-maximo").addEventListener("input", function() {
+    document.getElementById("max-value").textContent = this.value;
+});
+</script>
+
 {% endblock %}

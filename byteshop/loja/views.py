@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import *
-from .filtros import filtrar_produtos
+from .utils import filtrar_produtos, filtrar_min_max
 import uuid
+
 
 def homepage(request):
     banners = Banner.objects.filter(ativo=True)
@@ -12,7 +13,10 @@ def homepage(request):
 def loja(request, filtro=None):
     produtos = Produto.objects.filter(ativo=True)
     produtos = filtrar_produtos(produtos, filtro)
-    context = {"produtos": produtos}
+    minimo, maximo = filtrar_min_max(produtos)
+    itens = ItemEstoque.objects.filter(quantidade__gt=0, produto__in=produtos)
+    tamanhos = itens.values_list("tamanho", flat=True).distinct()
+    context = {"produtos": produtos, "tamanhos": tamanhos, "maximo": maximo, "minimo": minimo}
     return render(request, 'loja.html', context)
 
 
