@@ -37,24 +37,42 @@
 }
 
 .size-option input[type="radio"] {
-    display: none; /* Oculta o input original */
+    display: none;
 }
 
 .size-option label {
     font-weight: bold;
     display: inline-block;
-    padding: 5px 10px; /* Aumenta o tamanho do botão */
-    border: 2px solid #343a40; /* Cor da borda para dark */
-    border-radius: 3px; /* Bordas arredondadas */
+    padding: 5px 10px;
+    border: 2px solid #343a40;
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 18px; /* Tamanho da fonte */
-    color: #343a40; /* Cor do texto para dark */
+    font-size: 18px;
+    color: #343a40;
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* Estilo para quando o input radio está selecionado */
 .size-option input[type="radio"]:checked + label {
-    background-color: #343a40; /* Cor de fundo quando selecionado */
-    color: white; /* Cor do texto quando selecionado */
-    border-color: #1d2124; /* Cor da borda quando selecionado (mais escuro) */
+    background-color: #343a40;
+    color: white;
+    border-color: #1d2124;
+}
+
+/* Estilo para as mensagens de alerta */
+.alert-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 1050;
+        }
+
+.alert {
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+.alert.show-alert {
+    transform: translateX(0);
+    opacity: 1;
 }

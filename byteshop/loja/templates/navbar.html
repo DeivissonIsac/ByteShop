@@ -31,25 +31,40 @@
         </li>
         {% endfor %}
       </ul>
-      <ul class="navbar-nav ">
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'login' %}">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'minha_conta' %}">Minha Conta</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active p-0" href="{% url 'carrinho' %}">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
-              <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 0 0 4.25 22.5h15.5a1.875 1.875 0 0 0 1.865-2.071l-1.263-12a1.875 1.875 0 0 0-1.865-1.679H16.5V6a4.5 4.5 0 1 0-9 0ZM12 3a3 3 0 0 0-3 3v.75h6V6a3 3 0 0 0-3-3Zm-3 8.25a3 3 0 1 0 6 0v-.75a.75.75 0 0 1 1.5 0v.75a4.5 4.5 0 1 1-9 0v-.75a.75.75 0 0 1 1.5 0v.75Z" clip-rule="evenodd" />
-              {% if quantidade_produtos_carrinho > 0 %}
-              <span class="top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                {{quantidade_produtos_carrinho}}
-              </span>
-              {% endif %}
-            </svg>
-          </a>
-        </li>
+      <ul class="navbar-nav gap-1 me-3">
+        {% if request.resolver_match.view_name != 'checkout' and request.resolver_match.view_name != 'fazer_login' and request.resolver_match.view_name != 'criar_conta' %}
+          <li class="nav-item">
+            <a class="nav-link active p-0" href="{% url 'carrinho' %}">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+                <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 0 0 4.25 22.5h15.5a1.875 1.875 0 0 0 1.865-2.071l-1.263-12a1.875 1.875 0 0 0-1.865-1.679H16.5V6a4.5 4.5 0 1 0-9 0ZM12 3a3 3 0 0 0-3 3v.75h6V6a3 3 0 0 0-3-3Zm-3 8.25a3 3 0 1 0 6 0v-.75a.75.75 0 0 1 1.5 0v.75a4.5 4.5 0 1 1-9 0v-.75a.75.75 0 0 1 1.5 0v.75Z" clip-rule="evenodd" />
+                {% if quantidade_produtos_carrinho > 0 %}
+                <span class="top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {{quantidade_produtos_carrinho}}
+                </span>
+                {% endif %}
+              </svg>
+            </a>
+          </li>
+        {% endif %}
+        {% if request.user.is_authenticated %}
+          <li class="nav-item">
+              <a class="nav-link active p-0" href="{% url 'minha_conta' %}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                </svg>
+              </a>
+            </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link active p-0" href="{% url 'fazer_login' %}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+              </svg>
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </div>
   </div>

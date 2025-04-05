@@ -4,5 +4,41 @@
 {% block title %}Minha Conta{% endblock %}
 
 {% block body %}
+<div class="container my-2">
 <h1 class="text-center">Minha Conta</h1>
+    <div class="card shadow">
+        <div class="card-body">
+            <ul class="nav nav-tabs d-flex">
+                <li class="nav-item">
+                    <a class="nav-link active link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">
+                        <strong>Meus Dados</strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" aria-current="page" href="#">
+                        <strong>Meus Pedidos</strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">
+                        <strong>Meus Endereços</strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">
+                        <strong>Mudar Senha</strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{% url 'fazer_logout' %}">
+                        <strong>Sair</strong>
+                    </a>
+                </li>
+            </ul>
+            <div class="card-body">
+                <p>TEste</p>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

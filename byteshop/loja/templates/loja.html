@@ -4,54 +4,56 @@
 {% block title %}Loja{% endblock %}
 
 {% block body %}
-        {% if produtos %}
-            <div class="dropdown d-flex justify-content-end my-4 mx-4">
-                <button type="button" class="btn btn-outline-dark" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel-fill" viewBox="0 0 16 16">
-                      <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z"/>
+    {% if produtos %}
+        <div class="d-flex justify-content-end my-4 mx-4 gap-2 w-auto">
+            <div class="dropdown">
+                  <button class="btn btn-outline-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5"/>
                     </svg>
-                    Filtrar
-                </button>
-                <form method="POST" action="" class="dropdown-menu dropdown-menu-end p-4">
-                    {% csrf_token %}
-
-                    <p class="fw-bold">Preço</p>
-                    <input type="range" class="form-range" min="0" max={{ maximo }} step="10" id="preco-minimo" name="preco_minimo" value={{ minimo }}>
-                    <input type="range" class="form-range" min="0" max={{ maximo }} step="10" id="preco-maximo" name="preco_maximo" value={{ maximo }}>
-                    <p>De R$ <span id="min-value">{{ minimo }}</span> até R$ <span id="max-value">{{ maximo }}</span></p>
-
-                    <p class="fw-bold mb-0">Categoria:</p>
-                    {% for categoria in categorias %}
-                        <div class="form-check">
-                            <input type="radio" class="form-check-input" id="categoria-{{ categoria.slug }}" name="categoria" value="{{ categoria.slug }}">
-                            <label class="form-check-label" for="categoria-{{ categoria.slug }}">{{ categoria.nome.title }}</label>
-                        </div>
-                    {% endfor %}
-
-                    <p class="fw-bold mt-2 mb-0">Tipo:</p>
-                    <select class="form-select" aria-label="Default select example">
-                    {% for tipo in tipos %}
-                      <option value="{{ tipo.slug }}">{{ tipo.nome.title }}</option>
-<!--                        <div class="form-check">-->
-<!--                            <input type="radio" class="form-check-input" id="tipo-{{ tipo.nome }}" name="tipo" value="{{ tipo.slug }}">-->
-<!--                            <label class="form-check-label" for="tipo-{{ tipo.nome }}">{{ tipo.nome.title }}</label>-->
-<!--                        </div>-->
-                    {% endfor %}
-                    </select>
-
-                    <p class="fw-bold mt-2 mb-0">Tamanho:</p>
-                    {% for tamanho in tamanhos %}
-                        <div class="form-check">
-                            <input type="radio" class="form-check-input" id="size-{{ tamanho }}" name="tamanho" value="{{ tamanho }}">
-                            <label class="form-check-label" for="size-{{ tamanho }}">{{ tamanho }}</label>
-                        </div>
-                    {% endfor %}
-                    <div class="d-flex justify-content-center">
-                        <button type="submit" class="btn btn-success w-50 mt-3 justify-content-center">Aplicar Filtros</button>
-                    </div>
-                </form>
+                      Ordenar
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item ordenar-item" href="#" name="MenorPreco"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1"/>
+                    </svg>Menor Preço</a></li>
+                    <li><a class="dropdown-item ordenar-item" href="#" name="MaiorPreco"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
+                    </svg>Maior Preço</a></li>
+                    <li><a class="dropdown-item ordenar-item" href="#" name="MaisVendidos"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill pb-1" viewBox="0 0 16 16">
+                      <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                    </svg>Mais Vendidos</a></li>
+                  </ul>
             </div>
-        {% endif %}
+                <div class="dropdown">
+                    <button type="button" class="btn btn-outline-dark" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+                          <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/>
+                        </svg>
+                        Filtrar
+                    </button>
+                    <form method="POST" action="" class="dropdown-menu dropdown-menu-end p-4" style="width: 313px">
+                        {% csrf_token %}
+
+                        <p class="fw-bold">Preço</p>
+                        <input type="range" class="form-range" min="0" max="1000" step="10" id="preco-minimo" name="preco_minimo" value="0">
+                        <input type="range" class="form-range" min="0" max="1000" step="10" id="preco-maximo" name="preco_maximo" value="{{ maximo }}">
+                        <p>R$ <span id="min-value">0</span> - R$ <span id="max-value">{{ maximo }}</span></p>
+                        <input type="hidden" id="hidden-maximo" name="preco_maximo" value="{{ maximo }}">
+
+                        <p class="fw-bold mt-2 mb-0">Tamanho:</p>
+                        {% for tamanho in tamanhos %}
+                            <input type="radio" class="form-check-input" id="size-{{ tamanho }}" name="tamanho" value="{{ tamanho }}">
+                            <label class="form-check-label me-3" for="size-{{ tamanho }}">{{ tamanho }}</label>
+                        {% endfor %}
+                        <div class="d-flex justify-content-center gap-2">
+                            <a class="btn btn-outline-dark mt-3" href="{% url 'loja' %}">Limpar Filtros</a>
+                            <button type="submit" class="btn btn-success w-50 mt-3 ">Aplicar Filtros</button>
+                        </div>
+                    </form>
+                </div>
+        </div>
+    {% endif %}
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-12">
@@ -77,15 +79,5 @@
         </div>
     </div>
 </div>
-
-<script>
-document.getElementById("preco-minimo").addEventListener("input", function() {
-    document.getElementById("min-value").textContent = this.value;
-});
-
-document.getElementById("preco-maximo").addEventListener("input", function() {
-    document.getElementById("max-value").textContent = this.value;
-});
-</script>
 
 {% endblock %}

@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
 from .models import *
-from .utils import filtrar_produtos, filtrar_min_max
+from .utils import filtrar_produtos, filtrar_min_max, ordernar_produtos, form_filtrar_produtos
 import uuid
+from django.contrib import messages
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 
 
 def homepage(request):
@@ -13,9 +16,18 @@ def homepage(request):
 def loja(request, filtro=None):
     produtos = Produto.objects.filter(ativo=True)
     produtos = filtrar_produtos(produtos, filtro)
+
+    if request.method == "POST":
+        dados = request.POST.dict()
+        produtos = form_filtrar_produtos(produtos, dados)
+
     minimo, maximo = filtrar_min_max(produtos)
     itens = ItemEstoque.objects.filter(quantidade__gt=0, produto__in=produtos)
     tamanhos = itens.values_list("tamanho", flat=True).distinct()
+
+    ordem = request.GET.get("ordem", "MaisVendidos")
+    produtos = ordernar_produtos(produtos, ordem)
+
     context = {"produtos": produtos, "tamanhos": tamanhos, "maximo": maximo, "minimo": minimo}
     return render(request, 'loja.html', context)
 
@@ -39,14 +51,23 @@ def ver_produto(request, id_produto, id_cor=None):
                "cor_selecionada": cor_selecionada}
     return render(request, 'ver_produto.html', context)
 
+
 def adicionar_carrinho(request, id_produto):
     if request.method == "POST" and id_produto:
         dados = request.POST.dict()
         tamanho = dados.get("tamanho")
         id_cor = dados.get("cor")
+        novo_item = dados.get("novo_item")
         if not tamanho:
             return redirect('ver_produto', id_produto=id_produto, id_cor=id_cor)
-        resposta = redirect('carrinho')
+
+        #identificando se um novo item está sendo adicionado ou se está aumentando a quantidade
+        if novo_item == "True":
+            resposta = redirect('ver_produto', id_produto=id_produto, id_cor=id_cor)
+            messages.success(request, "Item adicionado no carrinho com sucesso!", "success")
+        else:
+            resposta = redirect('carrinho')
+
         #Pegar Cliente
         if request.user.is_authenticated:
             cliente = request.user.cliente
@@ -67,6 +88,7 @@ def adicionar_carrinho(request, id_produto):
         return resposta
     else:
         return redirect('loja')
+
 
 def remover_carrinho(request, id_produto):
     if request.method == "POST" and id_produto:
@@ -92,8 +114,10 @@ def remover_carrinho(request, id_produto):
             item_pedido.save()
             if item_pedido.quantidade <= 0:
                 item_pedido.delete()
+                messages.success(request, "Item removido do carrinho!", "danger")
         elif excluir_item == "excluir_item":
             item_pedido.delete()
+            messages.success(request, "Item removido do carrinho!", "danger")
         return redirect('carrinho')
     else:
         return redirect('loja')
@@ -157,9 +181,77 @@ def adicionar_endereco(request):
         return render(request, 'adicionar_endereco.html')
 
 
+def fazer_login(request):
+    if request.user.is_authenticated:
+        return redirect('loja')
+    if request.method == "POST":
+        dados = request.POST.dict()
+        if dados["email"] and dados["senha"]:
+            email = dados.get("email")
+            senha = dados.get("senha")
+            usuario = authenticate(request, username=email, password=senha)
+            if usuario:
+                login(request, usuario)
+                messages.success(request, "Login feito com sucesso!")
+                return redirect('loja')
+            else:
+                messages.error(request, "E-mail/Senha inválidos.", "danger")
+                return redirect('fazer_login')
+        else:
+            messages.error(request, "E-mail/Senha inválidos.", "danger")
+            return redirect('fazer_login')
+    else:
+        return render(request, 'user/login.html')
+
+
+def criar_conta(request):
+    if request.user.is_authenticated:
+        return redirect('loja')
+    if request.method == "POST":
+        dados = request.POST.dict()
+        if dados["email"] and dados["senha"] and dados["confirmar_senha"]:
+            email = dados.get("email")
+            senha = dados.get("senha")
+            confirmar_senha = dados.get("confirmar_senha")
+            if senha == confirmar_senha:
+                usuario, criado = User.objects.get_or_create(username=email, email=email)
+                if criado:
+                    #Criando o Usuario
+                    usuario.set_password(senha)
+                    usuario.save()
+
+                    #Fazendo o login do usuário criado
+                    usuario = authenticate(request, username=email, password=senha)
+                    login(request, usuario)
+
+                    #Criando o Cliente e vinculando ele ao usuario
+                    if request.COOKIES.get("id_sessao"):
+                        id_sessao = request.COOKIES.get("id_sessao")
+                        cliente, criado = Cliente.objects.get_or_create(id_sessao=id_sessao)
+                    else:
+                        cliente, criado = Cliente.objects.get_or_create(email=email)
+                    cliente.usuario = usuario
+                    cliente.email = email
+                    cliente.save()
+                    messages.success(request, "Conta criada com sucesso!")
+                    return redirect('loja')
+                else:
+                    messages.error(request, "E-mail já está cadastrado.", "danger")
+            else:
+                messages.error(request, "As senhas deve ser iguais.", "danger")
+        else:
+            messages.error(request, "Preencha os campos corretamente.", "danger")
+            return redirect('criar_conta')
+    return render(request, "user/criar_conta.html")
+
+
+@login_required
+def fazer_logout(request):
+    logout(request)
+    return redirect("fazer_login")
+
+
+@login_required
 def minha_conta(request):
     return render(request, 'user/minha_conta.html')
 
-
-def login(request):
-    return render(request, 'user/login.html')

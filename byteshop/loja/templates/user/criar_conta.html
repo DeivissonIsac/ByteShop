@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Criar Conta{% endblock %}
+
+{% block body %}
+<div class="container my-2">
+    <div class="row d-flex">
+        <div class="col-lg-6">
+            <img src="{% static 'images/criar_conta.svg' %}">
+        </div>
+        <div class="col-lg-6 d-flex align-items-center justify-content-center">
+            <div class="card w-75 shadow mb-3" style="border-radius: 20px">
+                <h1 class="text-center mt-2">Criar Conta ByteShop</h1>
+                <h6 class="text-center">Preencha seus dados e crie sua conta.</h6>
+                    <form method="POST" action="{% url 'criar_conta' %}" class="card-body d-flex row">
+                        {% csrf_token %}
+                        <div class="">
+                            <label for="inputEmail" class="form-label">E-mail</label>
+                            <input type="email" name="email" class="form-control" id="inputEmail" required>
+                        </div>
+                        <div class="mt-3">
+                            <label for="inputSenha" class="form-label">Senha</label>
+                            <input type="password" name="senha" class="form-control" id="inputSenha" required>
+                            <div class="invalid-feedback">As senhas não são iguais.</div>
+                        </div>
+                        <div class="mt-3">
+                            <label for="inputConfirmarSenha" class="form-label">Confirmar Senha</label>
+                            <input type="password" name="confirmar_senha" class="form-control" id="inputConfirmarSenha" required>
+                        </div>
+                        <div class="mt-3 ms-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="mostrarSenha">
+                            <label class="form-check-label" for="mostrarSenha">Mostrar senha</label>
+                        </div>
+                        <div class="mt-3 d-flex justify-content-center gap-3">
+                            <a href="{% url 'loja' %}" class="w-50"><button type="button" class="btn btn-outline-primary w-100">Voltar</button></a>
+                            <button type="submit" class="btn btn-primary w-50" id="btnCriarConta">Criar Conta</button>
+                        </div>
+                        <div class="mt-4 d-flex justify-content-center">
+                            <p>Já tem uma conta? <a href="{% url 'fazer_login' %}" class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">Fazer Login</a>
+                            </p>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('mostrarSenha').addEventListener('change', function() {
+        let senha = document.getElementById('inputSenha');
+        let confirmarSenha = document.getElementById('inputConfirmarSenha');
+        let tipo = this.checked ? 'text' : 'password';
+        senha.type = tipo;
+        confirmarSenha.type = tipo;
+    });
+
+    function validarSenhas() {
+        let senha = document.getElementById('inputSenha');
+        let confirmarSenha = document.getElementById('inputConfirmarSenha');
+        let botaoCriarConta = document.getElementById('btnCriarConta');
+
+        if (confirmarSenha.value.length > 0) {
+            if (senha.value !== confirmarSenha.value) {
+                senha.classList.add('is-invalid');
+                confirmarSenha.classList.add('is-invalid');
+                 botaoCriarConta.disabled = true;
+            } else {
+                senha.classList.remove('is-invalid');
+                confirmarSenha.classList.remove('is-invalid');
+                 botaoCriarConta.disabled = false;
+            }
+        } else {
+            senha.classList.remove('is-invalid');
+            confirmarSenha.classList.remove('is-invalid');
+             botaoCriarConta.disabled = false;
+        }
+    }
+
+    document.getElementById('inputConfirmarSenha').addEventListener('input', validarSenhas);
+    document.getElementById('inputSenha').addEventListener('input', validarSenhas);
+</script>
+
+{% endblock %}

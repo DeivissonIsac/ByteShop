@@ -35,6 +35,11 @@ class Produto(models.Model):
     categoria = models.ForeignKey(Categoria, null=True, blank=True, on_delete=models.SET_NULL)
     tipo = models.ForeignKey(Tipo, null=True, blank=True, on_delete=models.SET_NULL)
 
+    def total_vendas(self):
+        itens = ItensPedido.objects.filter(pedido__finalizado=True, item_estoque__produto=self.id)
+        total = sum([item.quantidade for item in itens])
+        return total
+
     def __str__(self):
         return f"{str(self.nome)} - {str(self.categoria)}: R$ {str(self.preco)}"
 
