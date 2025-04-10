@@ -5,6 +5,7 @@ class Cliente(models.Model):
     nome = models.CharField(max_length=100, null=True, blank=True)
     email = models.CharField(max_length=100, null=True, blank=True)
     telefone = models.CharField(max_length=20, null=True, blank=True)
+    cpf = models.CharField(max_length=20, null=True, blank=True)
     id_sessao = models.CharField(max_length=50, null=True, blank=True)
     usuario = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
 
@@ -89,6 +90,11 @@ class Pedido(models.Model):
         itens_pedido = ItensPedido.objects.filter(pedido__id=self.id)
         preco = sum([item.preco_total for item in itens_pedido])
         return preco
+
+    @property
+    def itens(self):
+        itens_pedido = ItensPedido.objects.filter(pedido__id=self.id)
+        return itens_pedido
 
 class ItensPedido(models.Model):
     item_estoque = models.ForeignKey(ItemEstoque, null=True, blank=True, on_delete=models.SET_NULL)

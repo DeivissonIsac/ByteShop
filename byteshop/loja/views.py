@@ -122,6 +122,7 @@ def remover_carrinho(request, id_produto):
     else:
         return redirect('loja')
 
+
 def carrinho(request):
     if request.user.is_authenticated:
         cliente = request.user.cliente
@@ -152,6 +153,7 @@ def checkout(request):
     enderecos = Endereco.objects.filter(cliente=cliente)
     context = {"pedido": pedido, "enderecos": enderecos, "itens_pedido": itens_pedido}
     return render(request, 'checkout.html', context)
+
 
 def adicionar_endereco(request):
     if request.method == "POST":
@@ -248,10 +250,61 @@ def criar_conta(request):
 @login_required
 def fazer_logout(request):
     logout(request)
+    messages.success(request, "Logout feito com sucesso!", "danger")
     return redirect("fazer_login")
 
 
 @login_required
 def minha_conta(request):
+    if request.method == "POST":
+        dados = request.POST.dict()
+        nome = dados["nome"]
+        email = dados["email"]
+        cpf = dados["cpf"]
+        telefone = dados["telefone"]
+        if email != request.user.email:
+            usuarios = User.objects.filter(email=email)
+            if len(usuarios) > 0:
+                messages.error(request, "Já existe outra conta com esse e-mail.", "danger")
+                return redirect("minha_conta")
+        cliente = request.user.cliente
+        cliente.email = email
+        request.user.email = email
+        request.user.username = email
+        cliente.nome = nome
+        cliente.cpf = cpf
+        cliente.telefone = telefone
+        cliente.save()
+        request.user.save()
+        messages.success(request, "Seus dados foram atualizados.", "success")
+        return redirect("minha_conta")
     return render(request, 'user/minha_conta.html')
 
+
+@login_required
+def meus_pedidos(request):
+    cliente = request.user.cliente
+    pedidos = Pedido.objects.filter(finalizado=True, cliente=cliente).order_by("-data_finalizacao")
+    context = {"pedidos": pedidos}
+    return render(request, 'user/meus_pedidos.html', context)
+
+
+@login_required
+def mudar_senha(request):
+    if request.method == "POST":
+        dados = request.POST.dict()
+        senha_atual = dados["senha_atual"]
+        senha_nova = dados["senha_nova"]
+        senha_confirmacao = dados["senha_confirmacao"]
+        if senha_nova == senha_confirmacao:
+            usuario = authenticate(request, username=request.user.email, password=senha_atual)
+            if usuario:
+                usuario.set_password(senha_nova)
+                usuario.save()
+                messages.success(request,"Senha alterada com sucesso.", "success")
+                return redirect("mudar_senha")
+            else:
+                messages.error(request,"Senha atual inválida.", "danger")
+        else:
+            messages.error("As senhas não são iguais.", "danger")
+    return render(request, 'user/mudar_senha.html')

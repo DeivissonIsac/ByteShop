@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Minha Conta{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    <div class="card shadow">
+        <div class="card-body">
+            <ul class="nav nav-tabs d-flex">
+                <li class="nav-item">
+                    <a class="nav-link link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{% url 'minha_conta' %}">
+                        <strong>Meus Dados</strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" aria-current="page" href="">
+                        <strong>Meus Pedidos</strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="#">
+                        <strong>Meus Endereços</strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link-dark link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{% url 'mudar_senha' %}">
+                        <strong>Mudar Senha</strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{% url 'fazer_logout' %}">
+                        <strong>Sair</strong>
+                    </a>
+                </li>
+            </ul>
+            {% if pedidos %}
+            <div class="card-body">
+                {% for pedido in pedidos %}
+                    <div class="card mt-3 shadow-sm">
+                        <div class="card-header bg-light d-flex justify-content-between flex-wrap">
+                            <div><strong>Data:</strong> {{ pedido.data_finalizacao }}</div>
+                            <div><strong>ID Pedido:</strong> {{ pedido.id }}</div>
+                            <div><strong>Código Transação:</strong> {{ pedido.codigo_transacao }}</div>
+                            <div><strong>Preço Total:</strong> R$ {{ pedido.preco_total }}</div>
+                        </div>
+                        <div class="card-body pb-0">
+                            <div class="row">
+                                {% for item in pedido.itens %}
+                                    <div class="col-md-6 col-lg-4 mb-3">
+                                        <div class="d-flex align-items-center border rounded p-2 h-100">
+                                            <img src="{{ item.item_estoque.produto.imagem.url }}" class="rounded" width="60" alt="Imagem do Produto" style="object-fit: contain;">
+                                            <div class="ms-3">
+                                                <h6 class="mb-1">{{ item.item_estoque.produto.nome }}</h6>
+                                                <p class="mb-1">
+                                                    <strong>Cor:</strong>
+                                                    <svg width="20px" height="20px" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                                        <defs>
+                                                            <style>.a{stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width: 3px}</style>
+                                                        </defs>
+                                                        <circle class="a" fill="{{ item.item_estoque.cor.codigo }}" cx="24" cy="24" r="21.5"/>
+                                                    </svg>
+                                                    <strong class="ms-3">Tam:</strong> {{ item.item_estoque.tamanho }}
+                                                </p>
+                                                <p class="mb-0"><strong>Qtd:</strong> {{ item.quantidade }} <strong class="ms-3">Total:</strong> R$ {{ item.preco_total }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% else %}
+                <p class="text-center mt-3">Você ainda não fez nenhum pedido!</p>
+                <a href="{% url 'loja' %}" class="d-flex justify-content-center"><button class="btn btn-sm btn-primary">Ir para a loja</button></a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

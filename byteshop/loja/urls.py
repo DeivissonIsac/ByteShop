@@ -3,6 +3,7 @@ from .views import *
 from django.contrib.auth import  views
 
 urlpatterns = [
+    #Links Gerais do Site
     path('', homepage, name="homepage"),
     path('loja/', loja, name="loja"),
     path('loja/<str:filtro>/', loja, name="loja"),
@@ -13,14 +14,20 @@ urlpatterns = [
     path('adicionar-endereco/', adicionar_endereco, name="adicionar_endereco"),
     path('adicionar-carrinho/<int:id_produto>/', adicionar_carrinho, name="adicionar_carrinho"),
     path('remover-carrinho/<int:id_produto>/', remover_carrinho, name="remover_carrinho"),
+
+    #Links Do Usuário
     path('minha-conta/', minha_conta, name="minha_conta"),
     path('entrar/', fazer_login, name="fazer_login"),
     path('sair/', fazer_logout, name="fazer_logout"),
     path('criar-conta/', criar_conta, name="criar_conta"),
+    path('meus-pedidos/', meus_pedidos, name="meus_pedidos"),
+    path('mudar-senha/', mudar_senha, name="mudar_senha"),
 
+    #Links Para Mudar Senha
     path("password_change/", views.PasswordChangeView.as_view(), name="password_change"),
     path("password_change/done/", views.PasswordChangeDoneView.as_view(), name="password_change_done"),
 
+    #Links Para "Esqueci Minha Senha"
     path("password_reset/", views.PasswordResetView.as_view(), name="password_reset"),
     path("password_reset/done/", views.PasswordResetDoneView.as_view(), name="password_reset_done"),
     path("reset/<uidb64>/<token>/", views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
